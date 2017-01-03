@@ -1,0 +1,15 @@
+Fix PCI Option ROM size calculation, allowing GPU passthrough.
+
+Fixes "ERROR: PCI region size must be pow2 type=0x8, size=0xfffe0000"
+
+--- xen-4.6.3.orig/stubdom/pciutils.patch	2016-06-20 05:08:22.000000000 -0700
++++ xen-4.6.3/stubdom/pciutils.patch	2017-01-03 00:22:04.971771772 -0800
+@@ -271,7 +271,7 @@
+ +                {
+ +                  u32 size;
+ +                  pci_write_long(d, reg, ~0);
+-+                  d->rom_size = pci_read_long(d, reg);
+++                  d->rom_size = pci_size(u, pci_read_long(d, reg), PCI_ROM_ADDRESS_MASK);
+ +                  pci_write_long(d, reg, u);
+ +                }
+ +            }
